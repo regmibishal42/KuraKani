@@ -1,0 +1,14 @@
+
+@import url('https://fonts.googleapis.com/css2?family=Pacifico&family=Shadows+Into+Light&family=Work+Sans:wght@300&display=swap');
+
+
+.App{
+    min-height: 100vh ;
+    display: flex;
+    background: #659999;  /* fallback for old browsers */
+    background: -webkit-linear-gradient(to right, #f4791f, #659999); 
+    background: linear-gradient(to right, #f4791f, #659999); 
+    
+    
+}
+
