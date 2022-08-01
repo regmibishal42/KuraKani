@@ -1,0 +1,53 @@
+const asyncHandler = require('express-async-handler');
+const User = require('../models/userModel');
+const generateToken = require('../config/generateJwt');
+
+const registerUser = asyncHandler(async (req,res) =>{
+    const {name,email,password,profile} = req.body
+    if(!name || !email || !password){
+        res.status(400);
+        throw new Error('Please Enter All the Fields')
+    }
+    const userExists = await User.findOne({email});
+    if(userExists){
+        res.status(400);
+        throw new Error("User already exist");
+    }
+    const user = await User.create({name,email,password,profile});
+    if(user) {
+        res.status(201).json({
+            _id:user._id,
+            name:user.name,
+            email:user.email,
+            profile:user.profile,
+            token:generateToken(user._id)
+        });
+    }else{
+        res.status(400);
+        throw new Error("Failed To Create The User At The Moment");
+    }
+});
+
+const authUser = asyncHandler(async (req,res)=>{
+    const {email,password} = req.body;
+    const user = await User.findOne({email});
+    if(!user){
+        res.status(400);
+        throw new Error("User Doesnot Exist");
+    }
+    const isMatched = await user.matchPassword(password);
+    if(isMatched){res.status(200).json({
+        _id:user._id,
+        name:user.name,
+        email:user.email,
+        profile:user.profile,
+        token:generateToken(user._id)
+    });}
+    else {
+        res.status(400);
+        throw new Error("Invalid Username or Password")
+    }
+    
+});
+
+module.exports = {registerUser,authUser}

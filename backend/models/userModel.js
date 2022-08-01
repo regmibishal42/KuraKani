@@ -1,13 +1,15 @@
 const mongoose = require('mongoose');
+const bcrypt = require('bcrypt');
 
-const UserModel = mongoose.Schema({
+const userSchema = mongoose.Schema({
     name: {
         type: String,
         required: true
     },
     email: {
         type: String,
-        required: true
+        required: true,
+        unique:true
     },
     password: {
         type: String,
@@ -15,12 +17,24 @@ const UserModel = mongoose.Schema({
     },
     profile: {
         type: String,
-        required: true,
+        // required: true,
         default: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTFY7ltALufnd2KT1pKEWz-B4XX9LZhNYbp7WvpavXBJ-gk3DEygUbw4pX9QyP69JIHKsw&usqp=CAU"
     }
 
 }, {timestamps: true});
 
-const User = mongoose.model("User",UserModel);
+userSchema.methods.matchPassword = async function(enteredPassword){
+    return await bcrypt.compare(enteredPassword,this.password);
+}
 
-module.export = User;
+userSchema.pre('save',async function(next){
+    if(!this.isModified){
+        next();
+    }
+    const salt = await bcrypt.genSalt(10);
+    this.password = await bcrypt.hash(this.password,salt);
+})
+
+const User = mongoose.model("User",userSchema);
+
+module.exports = User;
