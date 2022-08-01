@@ -7,7 +7,7 @@
     display: flex;
     background: #659999;  /* fallback for old browsers */
     background: -webkit-linear-gradient(to right, #f4791f, #659999); 
-    background: linear-gradient(to right, #f4791f, #659999); 
+    background: linear-gradient(to right, #ff3c00, #659999); 
     
     
 }

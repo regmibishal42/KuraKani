@@ -13,7 +13,7 @@ const theme = extendTheme({
     },
     customOrange:{
       100:"#f4791f",
-      500:"#f4791f"
+      500:"#ff3c00"
     }
   }
 })
