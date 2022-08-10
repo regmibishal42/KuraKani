@@ -16,7 +16,8 @@ import {
     DrawerHeader,
     DrawerBody,
     Input,
-    useToast
+    useToast,
+    Spinner
 } from '@chakra-ui/react';
 import {AiOutlineSearch, AiFillBell} from 'react-icons/ai';
 import {BsChevronBarDown} from 'react-icons/bs';
@@ -92,6 +93,7 @@ const SideDrawer = () => {
                 }
             };
         const {data} = await axios.post("http://localhost:3000/api/chat",{userId},config);
+        if(!chats.find((c)=>c._id === data._id)) setChats([data,...chats]);
         setSelectedChat(data) 
         setLoadingChat(false);
         onClose();
@@ -189,7 +191,10 @@ const SideDrawer = () => {
                                     () => accessChat(user._id)
                                 }/>
                         )))
-                    } </DrawerBody>
+
+                    } 
+                    {loadingChat && <Spinner ml='auto' display="flex" />}
+                    </DrawerBody> 
                 </DrawerContent>
 
             </Drawer>
