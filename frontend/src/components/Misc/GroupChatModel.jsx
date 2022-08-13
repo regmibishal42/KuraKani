@@ -26,7 +26,7 @@ const GroupChatModel = ({children}) => {
     const [searchResults, setSearchResults] = useState([]);
     const [loading, setLoading] = useState(false);
     const toast = useToast();
-    const {user, chats, selectedChat} = chatState();
+    const {user, chats, setChats} = chatState();
 
     const handleSearch = async (query) =>{
         setSearch(query);
@@ -55,9 +55,55 @@ const GroupChatModel = ({children}) => {
             });
         }
     }
-    const handleSubmit = () =>{}
-    const handleDelete = (userToDelete) => {
+    const handleSubmit = async () =>{
+        if(!groupChatName || !selectedUsers){
+            console.log('Submit Handler IF Statement')
+            toast({
+                title: "Please fill all the feilds",
+                status: "warning",
+                duration: 5000,
+                isClosable: true,
+                position: "top",
+            });
+            return;
+        }
+        try {
+            const config = {
+                headers: {
+                    Authorization: `Bearer ${
+                        user.token
+                    }`
+                }
+            };
+            const {data} = await axios.post(`http://localhost:3000/api/chat/group`,{
+                name:groupChatName,
+                users:JSON.stringify(selectedUsers.map((u)=>u._id))
+            },config);
+            setChats([data,...chats]);
+            onClose();
+            toast({
+                title:"New Group Chat Created",
+                status:"success",
+                duration:5000,
+                isClosable:true,
+                position:"bottom"
+            });
 
+            
+        } catch (error) {
+            console.log(error);
+            toast({
+                title:"Error Occured",
+                description: error.response.data,
+                status:'error',
+                duration:5000,
+                isClosable:true,
+                position:"bottom" 
+            });
+        }
+    }
+    const handleDelete = (userToDelete) => {
+        setSelectedUsers(selectedUsers.filter((sel)=>sel._id !== userToDelete._id));
     }
     const handleGroup = (userToAdd) => {
         if(selectedUsers.includes(userToAdd)){
@@ -95,7 +141,7 @@ const GroupChatModel = ({children}) => {
                         <Box w="100%" display="flex" flexWrap="wrap">
 
                         {selectedUsers.map((u)=>(
-                            <UserBadgeItem key={user._id} user={u} handleFunction={()=>handleDelete(user)} />
+                            <UserBadgeItem key={u._id} user={u} handleFunction={()=>handleDelete(user)} />
                             ))}
 
                             </Box>
