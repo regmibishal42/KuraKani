@@ -14,7 +14,7 @@ import {getSender} from '../../config/chatLogics';
 import GroupChatModel from '../Misc/GroupChatModel';
 
 
-const MyChats = () => {
+const MyChats = ({fetchAgian}) => {
     const {
         user,
         setSelectedChat,
@@ -53,7 +53,7 @@ const MyChats = () => {
     useEffect(() => {
         setLoggedUser(JSON.parse(localStorage.getItem("userInfo")));
         fetchChats();
-    }, [])
+    }, [fetchAgian])
     return (
         <Box display={
                 {
