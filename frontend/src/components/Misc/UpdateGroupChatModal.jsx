@@ -13,11 +13,13 @@ import {
     useToast,
     Box,
     FormControl,
-    Input
+    Input,
+    Spinner
 } from '@chakra-ui/react';
 import {AiOutlineEye} from 'react-icons/ai';
 import { chatState } from '../../Context/chatProvider';
 import UserBadgeItem from '../Users/UserBadgeItem';
+import UserListItem from '../Users/UserListItem';
 import axios from 'axios';
 
 const UpdateGroupChatModal = ({fetchAgian, setFetchAgain}) => {
@@ -31,9 +33,6 @@ const UpdateGroupChatModal = ({fetchAgian, setFetchAgain}) => {
     const [loading,setLoading] = useState(false);
     const [renameLoading,setRenameLoading] = useState(false);
 
-    const handleRemove = async (userToRemove) =>{
-
-    }
     const handleRename = async (newName) =>{
         if(!groupChatName) return;
         try {
@@ -66,7 +65,125 @@ const UpdateGroupChatModal = ({fetchAgian, setFetchAgain}) => {
         }
         setGroupChatName("");
     }
-    const handleSearch = async (query) => {}
+    const handleSearch = async (query) => {
+        setSearch(query);
+        if(!query) return ;
+        try {
+            setLoading(true);
+            const config = {
+                headers: {
+                    Authorization: `Bearer ${
+                        user.token
+                    }`
+                }
+            };
+            const {data} = await axios.get(`http://localhost:3000/api/user?search=${search}`,config);
+            console.log('Data From Group Chat Model',data);
+            setLoading(false);
+            setSearchResult(data);
+        } catch (error) {
+            toast({
+                title:"Error Occured",
+                description:"Failed to load the Search Results",
+                status:'error',
+                duration:5000,
+                isClosable:true,
+                position:"bottom-left" 
+            });
+        }
+
+    }
+    const handleAddUser = async (newUser) =>{
+        if(selectedChat.users.find((u)=>u._id === newUser._id)){
+            toast({
+                title:"User Is Already In The Group",
+                status:"error",
+                duration:5000,
+                isClosable:true,
+                position:"bottom"
+            });
+            return ;
+        }
+        if(selectedChat.groupAdmin._id !== user._id){
+            toast({
+                title:"Only Group Admin Can Add Others",
+                status:"error",
+                duration:5000,
+                isClosable:true,
+                position:"bottom"
+            });
+            return ;
+        }
+        try {
+            setLoading(true);
+            const config = {
+                headers: {
+                    Authorization: `Bearer ${
+                        user.token
+                    }`
+                }
+            };
+            const {data} = await axios.put("http://localhost:3000/api/chat/group/add",{
+                chatId:selectedChat._id,
+                userId:newUser._id
+            },config);
+            setSelectedChat(data);
+            setFetchAgain(!fetchAgian);
+            setLoading(false);
+
+        } catch (error) {
+                toast({
+                title:"Error Occured",
+                description:error.response.data.message,
+                status:"error",
+                duration:5000,
+                isClosable:true,
+                position:"bottom"
+            }); 
+            setLoading(false);
+        }
+    }
+
+    const handleRemove = async (userToRemove) =>{
+        if(selectedChat.groupAdmin._id !== user._id && userToRemove._id !== user._id){
+            toast({
+                title:"Only Admin Can Remove Someone",
+                status:"error",
+                duration:5000,
+                isClosable:true,
+                position:"bottom"
+            });
+            return;
+        }
+        try {
+            setLoading(true);
+            const config = {
+                headers: {
+                    Authorization: `Bearer ${
+                        user.token
+                    }`
+                }
+            };
+            const {data} = await axios.put("http://localhost:3000/api/chat/group/remove",{
+                chatId:selectedChat._id,
+                userId:userToRemove._id
+            },config);
+           userToRemove._id === user._id ? setSelectedChat() : setSelectedChat(data);
+            setFetchAgain(!fetchAgian);
+            setLoading(false);
+
+        } catch (error) {
+                toast({
+                title:"Error Occured",
+                description:error.response.data.message,
+                status:"error",
+                duration:5000,
+                isClosable:true,
+                position:"bottom"
+            }); 
+            setLoading(false);
+        }
+    }
 
 
     return (
@@ -115,6 +232,19 @@ const UpdateGroupChatModal = ({fetchAgian, setFetchAgain}) => {
                                 onChange={(e)=>handleSearch(e.target.value)}
                                 />
                             </FormControl>
+
+                            {/* Displaying searched Users */}
+                            {loading ? (
+                                <Spinner size="lg" />
+                            ) : (
+                                searchResult?.map((u)=>(
+                                    <UserListItem
+                                    key={u._id}
+                                    user={u}
+                                    handleFunction={()=>handleAddUser(u)}
+                                    />
+                                ))
+                            )}
 
 
                         </ModalBody>
