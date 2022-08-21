@@ -22,7 +22,7 @@ import UserBadgeItem from '../Users/UserBadgeItem';
 import UserListItem from '../Users/UserListItem';
 import axios from 'axios';
 
-const UpdateGroupChatModal = ({fetchAgian, setFetchAgain}) => {
+const UpdateGroupChatModal = ({fetchAgian, setFetchAgain,fetchMessages}) => {
     const {selectedChat,setSelectedChat,user} = chatState();
     const {isOpen, onClose, onOpen} = useDisclosure();
     const toast = useToast();
@@ -170,6 +170,7 @@ const UpdateGroupChatModal = ({fetchAgian, setFetchAgain}) => {
             },config);
            userToRemove._id === user._id ? setSelectedChat() : setSelectedChat(data);
             setFetchAgain(!fetchAgian);
+            fetchMessages();
             setLoading(false);
 
         } catch (error) {
