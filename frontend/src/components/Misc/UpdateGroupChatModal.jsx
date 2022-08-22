@@ -22,7 +22,7 @@ import UserBadgeItem from '../Users/UserBadgeItem';
 import UserListItem from '../Users/UserListItem';
 import axios from 'axios';
 
-const UpdateGroupChatModal = ({fetchAgian, setFetchAgain,fetchMessages}) => {
+const UpdateGroupChatModal = ({fetchAgain, setFetchAgain,fetchMessages}) => {
     const {selectedChat,setSelectedChat,user} = chatState();
     const {isOpen, onClose, onOpen} = useDisclosure();
     const toast = useToast();
@@ -49,7 +49,7 @@ const UpdateGroupChatModal = ({fetchAgian, setFetchAgain,fetchMessages}) => {
                 chatName:groupChatName
             },config);
             setSelectedChat(data);
-            setFetchAgain(!fetchAgian);
+            setFetchAgain(!fetchAgain);
             setRenameLoading(false);
             
         } catch (error) {
@@ -128,7 +128,7 @@ const UpdateGroupChatModal = ({fetchAgian, setFetchAgain,fetchMessages}) => {
                 userId:newUser._id
             },config);
             setSelectedChat(data);
-            setFetchAgain(!fetchAgian);
+            setFetchAgain(!fetchAgain);
             setLoading(false);
 
         } catch (error) {
@@ -169,7 +169,7 @@ const UpdateGroupChatModal = ({fetchAgian, setFetchAgain,fetchMessages}) => {
                 userId:userToRemove._id
             },config);
            userToRemove._id === user._id ? setSelectedChat() : setSelectedChat(data);
-            setFetchAgain(!fetchAgian);
+            setFetchAgain(!fetchAgain);
             fetchMessages();
             setLoading(false);
 

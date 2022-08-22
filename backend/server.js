@@ -6,7 +6,8 @@ const connectDb = require('./config/db');
 const userRoutes = require('./routes/userRoutes');
 const chatRoutes = require('./routes/chatRoutes');
 const messageRoute = require('./routes/messageRoutes');
-const {notFound,errorHandler} = require('./middleware/errorMiddleware')
+const {notFound,errorHandler} = require('./middleware/errorMiddleware');
+const { emit } = require('./models/userModel');
 
 const app = express();
 // we need to accept json data comming from the frontend
@@ -45,6 +46,10 @@ io.on("connection",(socket)=>{
         socket.join(room);
         console.log("User joined the room",room)
     });
+    // For typing animation
+    socket.on("typing",(room)=>socket.in(room).emit("typing"));
+    socket.on("stop typing",(room)=>socket.in(room).emit("stop typing"));
+
     socket.on("new message",(newMessagereceived)=>{
         let chat = newMessagereceived.chat;
         if(!chat.users) return console.log("chat.users is not defined");
@@ -52,5 +57,9 @@ io.on("connection",(socket)=>{
             if(user._id == newMessagereceived.sender._id) return;
             socket.in(user._id).emit("message received",newMessagereceived);
         })
+    });
+    socket.off("setup",()=>{
+        console.log("User Disconnected");
+        socket.leave(userData._id);
     });
 });

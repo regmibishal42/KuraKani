@@ -14,7 +14,7 @@ import {getSender} from '../../config/chatLogics';
 import GroupChatModel from '../Misc/GroupChatModel';
 
 
-const MyChats = ({fetchAgian}) => {
+const MyChats = ({fetchAgain}) => {
     const {
         user,
         setSelectedChat,
@@ -35,7 +35,7 @@ const MyChats = ({fetchAgian}) => {
                 }
             }
             const {data} = await axios.get('http://localhost:3000/api/chat', config);
-            console.log(data);
+            // console.log(data);
             setChats(data);
 
         } catch (error) {
@@ -53,7 +53,7 @@ const MyChats = ({fetchAgian}) => {
     useEffect(() => {
         setLoggedUser(JSON.parse(localStorage.getItem("userInfo")));
         fetchChats();
-    }, [fetchAgian])
+    }, [fetchAgain])
     return (
         <Box display={
                 {
@@ -129,7 +129,7 @@ const MyChats = ({fetchAgian}) => {
                                     chat._id
                             }>
                                 <Text> {
-                                    !chat.isGroupChat ? (getSender(loggedUser, chat.users)) : chat.chatName
+                                    !chat.isGroupChat ? getSender(loggedUser, chat.users) : chat.chatName
                                 } </Text>
                             </Box>
                         ))

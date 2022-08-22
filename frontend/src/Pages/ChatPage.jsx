@@ -6,7 +6,7 @@ import MyChats from '../components/Misc/MyChats';
 import ChatBox from '../components/Misc/ChatBox';
 
 const ChatPage = () => {
-  const [fetchAgian,setFetchAgain] = useState(false);
+  const [fetchAgain,setFetchAgain] = useState(false);
   const {user} = chatState();
   return (
     <div style={{width:"100%"}}>
@@ -18,8 +18,8 @@ const ChatPage = () => {
       h="91.5vh"
       p="10px"
       >
-        {user && <MyChats fetchAgian={fetchAgian}/>}
-        {user && <ChatBox fetchAgian={fetchAgian} setFetchAgain={setFetchAgain}/>}
+        {user && <MyChats fetchAgain={fetchAgain}/>}
+        {user && <ChatBox fetchAgain={fetchAgain} setFetchAgain={setFetchAgain}/>}
 
       </Box>
     </div>
