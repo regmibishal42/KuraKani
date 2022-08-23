@@ -26,7 +26,7 @@ app.use("/api/message",messageRoute);
 if(process.env.NODE_ENV === 'production'){
     app.use(express.static("app/frontend/dist"));
     app.get("*",(req,res)=>{
-        const filePath = path.resolve(__dirname1,"app/frontend/dist","index.html");
+        const filePath = path.resolve(__dirname,"app/frontend/dist","index.html");
         res.sendFile(filePath);
     })
 }else{
