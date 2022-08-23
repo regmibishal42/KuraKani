@@ -8,6 +8,7 @@ const chatRoutes = require('./routes/chatRoutes');
 const messageRoute = require('./routes/messageRoutes');
 const {notFound,errorHandler} = require('./middleware/errorMiddleware');
 const path = require('path');
+const { dirname } = require('path');
 
 const app = express();
 // we need to accept json data comming from the frontend
@@ -23,9 +24,11 @@ app.use("/api/message",messageRoute);
 //  ---------------Deployment----------------
 const __dirname1 = path.resolve();
 if(process.env.NODE_ENV === 'production'){
+    // console.log(__dirname1,path.join(__dirname1,"frontend","dist"),path.resolve(__dirname1,"frontend","dist","index.html"));
     app.use(express.static(path.join(__dirname1,"frontend","dist")));
     app.get("*",(req,res)=>{
-        res.sendFile(path.resolve(__dirname1,"frontend","dist","index.html"));
+        // const filePath = path.resolve(__dirname1,"frontend","dist","index.html");
+        res.sendFile('index.html');
     })
 }else{
     app.get('/',(req,res)=>{
