@@ -22,13 +22,12 @@ app.use("/api/chat",chatRoutes);
 app.use("/api/message",messageRoute);
 
 //  ---------------Deployment----------------
-const __dirname1 = path.resolve();
+// const __dirname1 = path.resolve();
 if(process.env.NODE_ENV === 'production'){
-    // console.log(__dirname1,path.join(__dirname1,"frontend","dist"),path.resolve(__dirname1,"frontend","dist","index.html"));
-    app.use(express.static(path.join(__dirname1,"frontend","dist")));
+    app.use(express.static("app/frontend/dist"));
     app.get("*",(req,res)=>{
-        // const filePath = path.resolve(__dirname1,"frontend","dist","index.html");
-        res.sendFile('index.html');
+        const filePath = path.resolve(__dirname1,"app/frontend/dist","index.html");
+        res.sendFile(filePath);
     })
 }else{
     app.get('/',(req,res)=>{
