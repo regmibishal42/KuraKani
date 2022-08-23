@@ -17,7 +17,8 @@ import {
     DrawerBody,
     Input,
     useToast,
-    Spinner
+    Spinner,
+    effect
 } from '@chakra-ui/react';
 import {AiOutlineSearch, AiFillBell} from 'react-icons/ai';
 import {BsChevronBarDown} from 'react-icons/bs';
@@ -28,9 +29,11 @@ import {useDisclosure} from '@chakra-ui/hooks';
 import axios from 'axios';
 import ChatLoading from '../chatLoading';
 import UserListItem from '../Users/UserListItem.jsx';
+import { getSender } from '../../config/chatLogics';
+import NotificationBadge, { Effect } from 'react-notification-badge';
 
 const SideDrawer = () => {
-    const {user,setSelectedChat,chats,setChats} = chatState();
+    const {user,setSelectedChat,chats,setChats,notification,setNotification} = chatState();
     const naviagte = useNavigate();
     const {isOpen, onOpen, onClose} = useDisclosure();
 
@@ -133,13 +136,27 @@ const SideDrawer = () => {
                 <div>
                     <Menu>
                         <MenuButton p={2}>
+                            <NotificationBadge count={notification.length} effect={Effect.SCALE} />
                             <AiFillBell size="1.5em"
                                 style={
                                     {marginTop: "3px"}
                                 }/>
                         </MenuButton>
                         {/* For Notification */}
-                        {/* <MenuList></MenuList> */} </Menu>
+                        <MenuList pl={2}>
+                            {notification.length == 0 && "No new messages"}
+                            {notification.map((noti)=>(
+                                <MenuItem key={noti._id} onClick={()=>{
+                                    setSelectedChat(noti.chat);
+                                    setNotification(notification.filter((n)=> n !== noti))
+                                }
+                                
+                                }>
+                                    {noti.chat.isGroupChat ? `New Message in ${noti.chat.chatName}`:`New Message From ${getSender(user,noti.chat.users)}`}
+                                </MenuItem>
+                            ))}
+                        </MenuList> 
+                    </Menu>
                     <Menu>
                         <MenuButton as={Button}
                             p={1}
